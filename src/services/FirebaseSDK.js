@@ -1,4 +1,6 @@
-import firebase from "firebase";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 // import { RNS3 } from "react-native-s3-upload";
 
 import uuid from "uuid";
