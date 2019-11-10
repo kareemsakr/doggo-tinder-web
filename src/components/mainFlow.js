@@ -1,8 +1,5 @@
 import React, { useContext } from "react";
-import { Context as UserContext } from "../context/userContext";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { Button, Paper } from "@material-ui/core";
 import SwipeableViews from "react-swipeable-views";
 import BottomNavigation from "./bottomNavigation";
 import MatchesComponent from "./matchesComponent";
@@ -10,18 +7,15 @@ import SwipeComponent from "./swipeComponent";
 import ProfileComponent from "./profileComponent";
 
 export default () => {
-  const { logout } = useContext(UserContext);
   const [value, setValue] = React.useState(1);
   const theme = useTheme();
 
   return (
-    <div>
-      <Button onClick={logout}>
-        <ExitToAppIcon />
-      </Button>
+    <div style={{ width: "100%", height: "100%" }}>
       <SwipeableViews
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
+        style={{ height: "100%" }}
       >
         <ProfileComponent />
         <SwipeComponent />
