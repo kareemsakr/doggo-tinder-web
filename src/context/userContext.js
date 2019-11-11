@@ -7,6 +7,7 @@ const Context = React.createContext();
 const Provider = ({ children }) => {
   let [user, setUser] = useState();
   let [error, setError] = useState("");
+  let [profiles, setProfiles] = useState({ length: 0 });
   let history = useHistory();
 
   useEffect(() => {
@@ -18,6 +19,17 @@ const Provider = ({ children }) => {
       }
     });
   }, []);
+
+  const getProfilesForSwiping = () => {
+    FirebaseSDK.getProfilesForSwiping(res => {
+      let arrayOfProfiles = [];
+
+      res.forEach(element => {
+        arrayOfProfiles.push(element.val());
+      });
+      setProfiles(arrayOfProfiles);
+    });
+  };
 
   const logout = () => {
     FirebaseSDK.logOut();
@@ -54,7 +66,16 @@ const Provider = ({ children }) => {
 
   return (
     <Context.Provider
-      value={{ user, login, error, resetError, signUp, logout }}
+      value={{
+        user,
+        login,
+        error,
+        resetError,
+        signUp,
+        logout,
+        profiles,
+        getProfilesForSwiping
+      }}
     >
       {children}
     </Context.Provider>
