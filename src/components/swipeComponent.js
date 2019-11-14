@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useSprings, animated, interpolate } from "react-spring";
+import { useSprings } from "react-spring";
 import { useGesture } from "react-use-gesture";
 import { Context as UserContext } from "../context/userContext";
+import Card from "./Card";
 
 // These two are just helpers, they curate spring data, values that are later being interpolated into css
 const to = i => ({
@@ -40,7 +41,11 @@ export default () => {
       set(i => {
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
-        const x = isGone ? (200 + window.innerWidth) * dir : down ? xDelta : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
+        const x = isGone
+          ? (200 + window.innerWidth * 3) * dir
+          : down
+          ? xDelta
+          : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         const rot = xDelta / 100 + (isGone ? dir * 10 * velocity : 0); // How much the card tilts, flicking it harder makes it rotate faster
         const scale = down ? 1.1 : 1; // Active cards lift up a bit
         if (dir === 1 && isGone) console.log("liked");
@@ -61,53 +66,19 @@ export default () => {
   useEffect(() => {
     getProfilesForSwiping();
   }, [getProfilesForSwiping]);
-  console.log(profiles);
 
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
   return props.map(({ x, y, rot, scale }, i) => (
-    <animated.div
+    <Card
+      x={x}
+      y={y}
+      rot={rot}
+      scale={scale}
+      i={i}
+      trans={trans}
+      profile={profiles[i]}
+      bind={bind}
       key={i}
-      style={{
-        transform: interpolate(
-          [x, y],
-          (x, y) => `translate3d(${x}px,${y}px,0)`
-        ),
-        ...styles.cardContainer
-      }}
-    >
-      {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
-      <animated.div
-        {...bind(i)}
-        style={{
-          transform: interpolate([rot, scale], trans),
-          backgroundImage: `url(${profiles[i].profile_picture})`,
-          ...styles.card
-        }}
-      />
-    </animated.div>
+    />
   ));
-};
-
-const styles = {
-  cardContainer: {
-    position: "absolute",
-    height: "90vh",
-    width: "100vw",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    backgroundColor: "white",
-    backgroundSize: "auto 85%",
-    width: "45vh",
-    height: "85vh",
-    maxWidth: "300px",
-    maxHeight: "570px",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center center",
-    borderRadius: "10px",
-    boxShadow:
-      "0 12.5px 100px -10px rgba(50, 50, 73, 0.4), 0 10px 10px -10px rgba(50, 50, 73, 0.3)"
-  }
 };

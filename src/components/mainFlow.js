@@ -16,6 +16,7 @@ export default () => {
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
         style={{ height: "100%" }}
+        disabled
       >
         <ProfileComponent />
         <SwipeComponent />
