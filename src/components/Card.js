@@ -53,8 +53,7 @@ const styles = {
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center center",
     borderRadius: "10px",
-    boxShadow:
-      "0 12.5px 100px -10px rgba(50, 50, 73, 0.4), 0 10px 10px -10px rgba(50, 50, 73, 0.3)"
+    boxShadow: "rgba(0, 0, 0, 0.25) 0px 15px 25px -5px"
   },
   ownerPhoto: {
     position: "absolute",

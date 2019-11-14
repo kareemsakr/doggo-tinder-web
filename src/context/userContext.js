@@ -5,7 +5,8 @@ import { useHistory } from "react-router-dom";
 const Context = React.createContext();
 
 const Provider = ({ children }) => {
-  let [user, setUser] = useState();
+  let [user, setUser] = useState(null);
+  let [userProfile, setUserProfile] = useState({});
   let [error, setError] = useState("");
   let [profiles, setProfiles] = useState({ length: 0 });
   let history = useHistory();
@@ -14,6 +15,10 @@ const Provider = ({ children }) => {
     FirebaseSDK.getLoggedInUser(currentUser => {
       if (currentUser) {
         setUser(currentUser);
+        FirebaseSDK.getUserProfile(res => {
+          setUserProfile(res.val() || {});
+          //history.push("/updateprofile");
+        });
       } else {
         setUser(null);
       }
@@ -67,6 +72,7 @@ const Provider = ({ children }) => {
   return (
     <Context.Provider
       value={{
+        userProfile,
         user,
         login,
         error,

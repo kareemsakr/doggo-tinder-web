@@ -11,11 +11,11 @@ export default () => {
   const theme = useTheme();
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: "100%", height: "100%", backgroundColor: "#f5f7fa" }}>
       <SwipeableViews
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
-        style={{ height: "100%" }}
+        style={{ height: "100%", overflow: "hidden" }}
         disabled
       >
         <ProfileComponent />
