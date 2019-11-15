@@ -9,6 +9,8 @@ const Provider = ({ children }) => {
   let [userProfile, setUserProfile] = useState({});
   let [error, setError] = useState("");
   let [profiles, setProfiles] = useState({ length: 0 });
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+
   let history = useHistory();
 
   useEffect(() => {
@@ -16,8 +18,10 @@ const Provider = ({ children }) => {
       if (currentUser) {
         setUser(currentUser);
         FirebaseSDK.getUserProfile(res => {
+          if (!res.val().name) {
+            setProfileDialogOpen(true);
+          }
           setUserProfile(res.val() || {});
-          //history.push("/updateprofile");
         });
       } else {
         setUser(null);
@@ -69,9 +73,19 @@ const Provider = ({ children }) => {
     setError("");
   };
 
+  const updateProfile = (profile, success, fail) => {
+    FirebaseSDK.updateUserProfile(profile, success, fail);
+  };
+
+  const openEditProfileDialog = () => setProfileDialogOpen(true);
+  const closeEditProfileDialog = () => setProfileDialogOpen(false);
+
   return (
     <Context.Provider
       value={{
+        openEditProfileDialog,
+        closeEditProfileDialog,
+        profileDialogOpen,
         userProfile,
         user,
         login,
@@ -80,7 +94,8 @@ const Provider = ({ children }) => {
         signUp,
         logout,
         profiles,
-        getProfilesForSwiping
+        getProfilesForSwiping,
+        updateProfile
       }}
     >
       {children}

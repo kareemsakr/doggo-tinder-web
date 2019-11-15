@@ -1,9 +1,17 @@
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-// import { RNS3 } from "react-native-s3-upload";
+import { uploadFile } from "react-s3";
 
 import uuid from "uuid";
+
+const s3Config = {
+  bucketName: "doggo-tinder-photos",
+  region: "ca-central-1",
+  dirName: "uploads/",
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY
+};
 
 class FirebaseSDK {
   constructor() {
@@ -55,27 +63,6 @@ class FirebaseSDK {
   getLoggedInUser = cb => {
     firebase.auth().onAuthStateChanged(cb);
   };
-
-  // uploadImage = async uri => {
-  //   try {
-  //     const file = {
-  //       uri,
-  //       name: "hello ketteh" + ".png",
-  //       type: "image/png"
-  //     };
-  //     const options = {
-  //       keyPrefix: "uploads/",
-  //       bucket: "doggo-tinder-photos",
-  //       region: "ca-central-1",
-  //       accessKey: process.env.REACT_APP_AWS_ACCESS_KEY,
-  //       secretKey: process.env.REACT_APP_AWS_SECRET_KEY,
-  //       successActionStatus: 201
-  //     };
-  //     RNS3.put(file, options).progress(e => console.log(e.loaded / e.total));
-  //   } catch (err) {
-  //     console.log("uploadImage try/catch error: " + err.message);
-  //   }
-  // };
 
   getUserProfile = async cb => {
     var userRef = firebase.auth().currentUser;
@@ -183,44 +170,23 @@ class FirebaseSDK {
   };
   updateUserProfile = async (userProf, success_callback, failed_callback) => {
     let profileStorageURL = "";
-    // if (userProf.imageURL) {
-    //   const file = {
-    //     uri: userProf.imageURL,
-    //     name: uuid.v4() + ".png",
-    //     type: "image/png"
-    //   };
-    //   const options = {
-    //     keyPrefix: "uploads/",
-    //     bucket: "doggo-tinder-photos",
-    //     region: "ca-central-1",
-    //     accessKey: process.env.REACT_APP_AWS_ACCESS_KEY,
-    //     secretKey: process.env.REACT_APP_AWS_SECRET_KEY,
-    //     successActionStatus: 201
-    //   };
-
-    //   const response = await RNS3.put(file, options);
-    //   profileStorageURL = response.body.postResponse.location;
-    // }
+    if (userProf.profile_picture_BLOB) {
+      const response = await uploadFile(
+        userProf.profile_picture_BLOB,
+        s3Config
+      );
+      profileStorageURL = response.location;
+    } else {
+      profileStorageURL = userProf.profile_picture;
+    }
 
     let ownerStorageURL = "";
-    // if (userProf.ownerImageURL) {
-    //   console.log("setting owner image");
-    //   const file = {
-    //     uri: userProf.ownerImageURL,
-    //     name: uuid.v4() + ".png",
-    //     type: "image/png"
-    //   };
-    //   const options = {
-    //     keyPrefix: "uploads/",
-    //     bucket: "doggo-tinder-photos",
-    //     region: "ca-central-1",
-    //     accessKey: process.env.REACT_APP_AWS_ACCESS_KEY,
-    //     secretKey: process.env.REACT_APP_AWS_SECRET_KEY,
-    //     successActionStatus: 201
-    //   };
-    //   const response = await RNS3.put(file, options);
-    //   ownerStorageURL = response.body.postResponse.location;
-    // }
+    if (userProf.owner_picture_BLOB) {
+      const response = await uploadFile(userProf.owner_picture_BLOB, s3Config);
+      ownerStorageURL = response.location;
+    } else {
+      ownerStorageURL = userProf.owner_picture;
+    }
 
     var userRef = firebase.auth().currentUser;
     if (userRef != null) {

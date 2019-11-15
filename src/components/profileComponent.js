@@ -7,13 +7,14 @@ import { Context as UserContext } from "../context/userContext";
 import { Avatar, Typography } from "@material-ui/core";
 
 export default () => {
-  const { logout, userProfile } = useContext(UserContext);
-  console.log(userProfile);
+  const { logout, userProfile, openEditProfileDialog } = useContext(
+    UserContext
+  );
   return (
     <div style={styles.container}>
       <div style={styles.profileCard}>
         <div style={styles.buttons}>
-          <Button onClick={logout} style={styles.editButton}>
+          <Button onClick={openEditProfileDialog} style={styles.editButton}>
             <SettingsIcon />
           </Button>
           <Button onClick={logout} style={styles.logoutButton}>
@@ -28,30 +29,27 @@ export default () => {
             alignItems: "center"
           }}
         >
-          <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center"
+            }}
+          >
             <Avatar src={userProfile.profile_picture} style={styles.avatar} />
-            <div
-              style={{
-                display: "flex",
-                position: "absolute",
-                flexDirection: "row-reverse",
-                alignItems: "flex-end",
-                left: "0",
-                top: "0",
-                right: "0",
-                bottom: "0"
-              }}
-            >
+            <div style={styles.ownerOverlay}>
               <Avatar
-                src={userProfile.profile_picture}
+                src={userProfile.owner_picture}
                 style={{ width: "100px", height: "100px" }}
               />
             </div>
           </div>
-          <Typography component="h1" variant="h5">
-            Name
+          <Typography component="h1" variant="h5" style={{ marginTop: "50px" }}>
+            {userProfile.name}
           </Typography>
-          <Typography>Bio blah blah blah blah blah blah blah</Typography>
+          <Typography>{userProfile.bio}</Typography>
         </div>
       </div>
     </div>
@@ -85,7 +83,6 @@ const styles = {
     maxWidth: "450px",
     marginTop: "50px",
     marginBottom: "50px",
-    // borderRadius: "15px",
     boxShadow: "rgba(0, 0, 0, 0.25) 0px 15px 25px -5px",
     backgroundColor: "#ffffff"
   },
@@ -95,5 +92,10 @@ const styles = {
   },
   logoutButton: {
     jusifySelf: "end"
+  },
+  ownerOverlay: {
+    position: "absolute",
+    left: "60%",
+    top: "65%"
   }
 };
